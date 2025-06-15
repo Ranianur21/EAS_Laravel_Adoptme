@@ -1,51 +1,69 @@
 <?php
 
+use App\Models\Hewan;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\HewanController; 
-use App\Http\Controllers\Auth\LoginController; 
-use App\Http\Controllers\Auth\RegisterController; 
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\HewanController;
+use App\Http\Controllers\AdopsiController;
+use App\Http\Controllers\UserProfileController;
 
-// Rute Halaman Utama
-Route::get('/', [HomeController::class, 'index'])->name('home');
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+*/
+
+// --- RUTE PUBLIK (Tidak memerlukan login) ---
+Route::get('/', [HomeController::class, 'index'])->name('home'); 
 
 Route::get('/kontak', function () {
-    return view('user.kontak'); 
+    return view('user.kontak');
 })->name('kontak');
 
 Route::get('/tentang', function () {
-    return view('user.tentang'); 
+    return view('user.tentang');
 })->name('tentang');
 
+Route::get('/hewan', [HewanController::class, 'index'])->name('hewan');
+Route::get('/hewan/{id}', [HewanController::class, 'show'])->name('hewan.show');
+
 Route::get('/keranjang', function () {
-    return view('keranjang'); 
+    return view('keranjang');
 })->name('keranjang');
 
-
-Route::get('/hewan', [HewanController::class, 'index'])->name('hewan');
-Route::get('/daftarAdopt', function () {
-    return view('daftarAdopt'); 
-})->name('daftarAdopt');
+//route daftarkan hewan
+Route::get('/daftarkanhewan', [HewanController::class, 'daftarkanHewanForm'])->name('daftarkanhewan.form');
+Route::post('/daftarkanhewan', [HewanController::class, 'store'])->name('daftarkanhewan.store');
 
 
-Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [LoginController::class, 'login']);
-Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
-Route::post('/register', [RegisterController::class, 'register']);
-
+// --- RUTE YANG MEMBUTUHKAN LOGIN ---
 Route::middleware('auth')->group(function () {
-    Route::get('/profil', function () {
-        return view('profil');
-    })->name('profil');
+    Route::get('/dashboard', function () {
+    $hewansTersedia = Hewan::where('status', 'tersedia')->get();
+    $hewansDiadopsi = Hewan::where('status', 'diadopsi')->latest()->take(4)->get();
+    return view('dashboard', compact('hewansTersedia', 'hewansDiadopsi'));
+})->name('dashboard');
 
-    Route::get('/toko', function () {
-        return view('toko');
-    })->name('toko');
+    // Halaman profil kustom (menampilkan info & riwayat adopsi user)
+    Route::get('/profil', [UserProfileController::class, 'showProfile'])->name('profil');
+
 
     Route::get('/panduan', function () {
-        return view('panduan'); 
+        return view('panduan');
     })->name('panduan');
 
+    // --- RUTE ADOPSI ---
+Route::get('/adopsi/form/{hewan_id}', [AdopsiController::class, 'showAdopsiForm'])->name('adopsi.form');
 
-    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+// Route untuk submit form
+Route::post('/adopsi/submit', [AdopsiController::class, 'submitAdopsiForm'])->name('adopsi.submit');
+
+// Route untuk konfirmasi
+Route::get('/adopsi/konfirmasi', function () {
+    return view('adopsi.konfirmasi');
+})->name('adopsi.konfirmasi');
+
 });
+
+// Rute otentikasi Laravel Breeze (login, register, dsb.)
+require __DIR__.'/auth.php';

@@ -2,47 +2,73 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
+    protected $table = 'pengguna';
+
     protected $fillable = [
         'name',
         'email',
         'password',
+        'alamat',
+        'umur',
+        'pekerjaan',
+        'no_telp',
+        'path_foto_ktp',
+        'role',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+        'umur' => 'integer',
+    ];
+
     /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
+     * Relasi ke tabel adopsi
+     * 
+     * @return HasMany<Adopsi>
      */
-    protected function casts(): array
+    public function adopsi(): HasMany
     {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
+        return $this->hasMany(Adopsi::class);
+    }
+
+    /**
+     * Alias untuk relasi adopsi (bisa dihapus jika tidak diperlukan)
+     * 
+     * @return HasMany<Adopsi>
+     */
+    public function adopsiPengajuan(): HasMany
+    {
+        return $this->adopsi(); // Menggunakan relasi yang sama
+    }
+
+    /**
+     * Cek apakah user adalah admin
+     */
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    /**
+     * Cek apakah user sudah mengunggah KTP
+     */
+    public function hasKTP(): bool
+    {
+        return !empty($this->path_foto_ktp);
     }
 }

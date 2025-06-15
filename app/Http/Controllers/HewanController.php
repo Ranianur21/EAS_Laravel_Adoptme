@@ -2,21 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Hewan; // Import model Hewan
+use App\Models\Hewan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class HewanController extends Controller
 {
     /**
      * Menampilkan semua hewan yang tersedia untuk adopsi.
-     * Termasuk logika filter jika ada parameter di URL.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\View\View
      */
     public function index(Request $request)
     {
-        // 1. Query untuk Hewan yang Tersedia (dengan filter)
         $queryTersedia = Hewan::where('status', 'tersedia');
 
         if ($request->has('jenis') && $request->input('jenis') !== 'Semua') {
@@ -25,12 +25,53 @@ class HewanController extends Controller
 
         $hewansTersedia = $queryTersedia->orderBy('created_at', 'desc')->get();
 
-        // 2. Query untuk Hewan yang Sudah Diadopsi (tanpa filter 'jenis' dari request ini, karena biasanya hewan diadopsi tidak difilter berdasarkan jenis di daftar adopsi)
         $hewansDiadopsi = Hewan::where('status', 'diadopsi')
-                                ->orderBy('updated_at', 'desc') // Bisa diurutkan berdasarkan kapan diadopsi
-                                ->get();
+            ->orderBy('updated_at', 'desc')
+            ->get();
 
-        // Teruskan kedua koleksi data ke view
         return view('user.hewan', compact('hewansTersedia', 'hewansDiadopsi'));
+    }
+
+    /**
+     * Menampilkan form untuk pengguna yang ingin mendaftarkan hewan mereka.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function daftarkanHewanForm()
+{
+    return view('user.daftarkanhewan');
+}
+    /**
+     * Menyimpan data hewan baru yang diajukan pengguna.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function store(Request $request)
+    {
+        $request->validate([
+            'nama' => 'required|string|max:100',
+            'jenis' => 'required|in:Anjing,Kucing,Kelinci',
+            'jenis_kelamin' => 'required|in:Jantan,Betina',
+            'usia' => 'required|integer|min:0|max:30',
+            'deskripsi' => 'required|string|max:1000',
+            'gambar' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+
+        // Simpan gambar ke storage/app/public/gambar_hewan
+        $path = $request->file('gambar')->store('gambar_hewan', 'public');
+
+        Hewan::create([
+            'nama' => $request->input('nama'),
+            'jenis' => $request->input('jenis'),
+            'jenis_kelamin' => $request->input('jenis_kelamin'),
+            'usia' => $request->input('usia'),
+            'deskripsi' => $request->input('deskripsi'),
+            'gambar' => basename($path),
+            'status' => 'tersedia',
+            'user_id' => Auth::id(), // Jika ada sistem user login
+        ]);
+
+        return redirect()->route('hewan.index')->with('success', 'Hewan berhasil didaftarkan untuk diadopsi!');
     }
 }
