@@ -4,6 +4,7 @@
         @include('user.home_content', [
             'hewansTersedia' => $hewansTersedia,
             'hewansDiadopsi' => $hewansDiadopsi,
+            'artikelEdukasi' => $artikelEdukasi
         ])
     </x-app-layout>
 @else
@@ -11,6 +12,7 @@
         @include('user.home_content', [
             'hewansTersedia' => $hewansTersedia,
             'hewansDiadopsi' => $hewansDiadopsi,
+            'artikelEdukasi' => $artikelEdukasi
         ])
     </x-guest-layout>
 @endauth

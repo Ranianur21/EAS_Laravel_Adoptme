@@ -38,6 +38,6 @@ class Hewan extends Model
      */
     public function scopeTersedia($query)
     {
-        return $query->where('status', '!=', 'Sudah Diadopsi');
+        return $query->where('jenis', '!=', 'Sudah Diadopsi');
     }
 }

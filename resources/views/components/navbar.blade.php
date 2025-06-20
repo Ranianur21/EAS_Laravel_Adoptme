@@ -10,6 +10,7 @@
             <x-nav-link href="{{ route('tentang') }}" :active="request()->routeIs('tentang')">Tentang</x-nav-link>
             <x-nav-link href="{{ route('hewan') }}" :active="request()->routeIs('hewan')">Hewan</x-nav-link>
             <x-nav-link href="{{ route('kontak') }}" :active="request()->routeIs('kontak')">Kontak</x-nav-link>
+            <x-nav-link href="{{ route('panduan') }}" :active="request()->routeIs('panduan')">Panduan</x-nav-link>
 
             @guest {{-- Jika pengguna BELUM login --}}
                 <a href="{{ route('login') }}" class="hover:text-gray-300">Login</a>
@@ -24,7 +25,6 @@
 
                     <div id="dropdownMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-300 text-gray-800">
                         <a href="{{ route('profil') }}" class="block px-4 py-2 hover:bg-gray-100">Profil</a>
-                        <a href="{{ route('panduan') }}" class="block px-4 py-2 hover:bg-gray-100">Panduan</a>
                         <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
                            class="block px-4 py-2 text-[#8b5e34] hover:bg-gray-100 font-bold">Logout</a>
                         <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">

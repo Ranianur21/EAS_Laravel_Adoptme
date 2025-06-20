@@ -1,3 +1,4 @@
+
     <header class="bg-[#8b5e34] text-white py-12">
         <div class="container mx-auto flex flex-col md:flex-row items-center justify-between px-6">
             <div class="text-center md:text-left md:w-1/2">
@@ -19,7 +20,9 @@
         <div class="bg-white p-8 rounded-lg shadow-lg max-w-3xl mx-auto text-center">
             <h2 class="text-3xl font-bold text-[#8b5e34]">AdoptMe</h2>
             <p class="text-gray-600 mt-4 text-justify">
-                AdoptMe adalah platform yang menghubungkan hewan peliharaan yang membutuhkan rumah dengan calon adopter yang peduli...
+                AdoptMe adalah platform yang menghubungkan hewan peliharaan yang membutuhkan rumah dengan calon adopter yang peduli.
+            Kami berkomitmen untuk memberikan kehidupan yang lebih baik bagi hewan-hewan terlantar dengan membantu mereka menemukan
+            keluarga yang penuh kasih.
             </p>
         </div>
     </section>
@@ -30,7 +33,7 @@
         <p class="text-gray-600 max-w-2xl mx-auto mt-4 mb-10">Berbagai hewan menggemaskan yang siap diadopsi...</p>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            @forelse ($hewansTersedia->take(4) as $hewan)
+            @forelse ($hewansTersedia->take(6) as $hewan)
                 <div class="hewan-item bg-white p-6 border border-[#8b5e34] rounded-lg shadow-md hover:scale-105">
                     <div class="w-full h-56 flex items-center justify-center">
                         <img src="{{ asset('storage/gambar_hewan/' . $hewan->gambar) }}" class="object-contain rounded-md h-full w-full">
@@ -54,51 +57,51 @@
         <a href="{{ route('hewan') }}" class="mt-8 inline-block bg-[#4a2c1f] text-white py-3 px-6 rounded-lg text-lg font-semibold hover:bg-[#341d13] transition">Lihat Semua Hewan</a>
     </section>
 
-    {{-- Artikel Edukasi --}}
-    <section class="container mx-auto py-16 text-center">
+    {{-- === BAGIAN ARTIKEL EDUKASI YANG SUDAH DIKOREKSI DAN FINAL === --}}
+    <section class="container mx-auto py-16 text-center"> {{-- max-w-screen-lg DIHAPUS agar lebih lebar dan konten di dalam bisa meregang --}}
         <h2 class="text-4xl font-bold text-[#4a2c1f]">Artikel Edukasi</h2>
-        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mt-10">
-            @php
-                $artikel = [
-                    ["judul" => "Manfaat Adopsi Hewan", "gambar" => "img/ed1.jpg", "link" => "artikel1.php"],
-                    ["judul" => "Persiapan Sebelum Adopsi", "gambar" => "img/ed2.jpg", "link" => "artikel2.php"],
-                    ["judul" => "Merawat Hewan dengan Baik", "gambar" => "img/ed3.jpg", "link" => "artikel3.php"],
-                    ["judul" => "Tips Adopsi yang Sukses", "gambar" => "img/ed4.jpg", "link" => "artikel4.php"],
-                ];
-            @endphp
-            @foreach ($artikel as $a)
-                <div class="bg-white p-4 border-2 border-[#8b5e34] rounded-lg shadow-md">
-                    <img src="{{ asset($a['gambar']) }}" alt="{{ $a['judul'] }}" class="w-full h-40 object-cover rounded-md">
-                    <h3 class="text-xl font-bold text-[#8b5e34] mt-3">{{ $a['judul'] }}</h3>
-                    <a href="{{ $a['link'] }}" class="mt-3 inline-block bg-[#d9a36a] text-white px-4 py-2 rounded-lg hover:bg-[#c48950]">Baca Selengkapnya</a>
-                </div>
-            @endforeach
-        </div>
-    </section>
-
-    {{-- Galeri --}}
-    <section class="container mx-auto mt-12 px-6">
-        <h2 class="text-3xl font-bold text-center text-[#4a2c1f] mb-6">Galeri Adopsi Berhasil</h2>
-        <div class="flex flex-wrap justify-center gap-6">
-            @forelse($hewansDiadopsi as $hewan)
-                <div class="shadow-lg rounded-xl overflow-hidden w-40 h-40 flex items-center justify-center bg-white">
-                    <img src="{{ asset('storage/gambar_hewan/' . $hewan->gambar) }}" alt="Adopsi Berhasil: {{ $hewan->nama }}" class="object-cover w-full h-full">
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-10"> {{-- Pastikan lg:grid-cols-3 untuk 3 kolom lebar --}}
+            @forelse($artikelEdukasi as $artikel) {{-- Gunakan variabel $artikelEdukasi dari HomeController --}}
+                <div class="bg-white p-4 border-2 border-[#8b5e34] rounded-lg shadow-md overflow-hidden"> {{-- DITAMBAHKAN: overflow-hidden untuk gambar agar tidak keluar batas --}}
+                    <img src="{{ asset('storage/' . $artikel->image_url) }}" alt="{{ $artikel->title }}" class="w-full h-40 object-cover rounded-md">
+                    <h3 class="text-xl font-bold text-[#8b5e34] mt-3">{{ $artikel->title }}</h3>
+                    <p class="text-gray-700 text-sm">{{ $artikel->excerpt }}</p>
+                    <a href="" class="mt-6 inline-block bg-[#d9a36a] text-white px-4 py-2 rounded-lg shadow-md hover:bg-[#c48950]">Baca Selengkapnya</a> {{-- mt-6 untuk spasi lebih baik --}}
                 </div>
             @empty
-                <p class="text-gray-500">Belum ada galeri adopsi berhasil.</p>
+                <p class="col-span-full text-center text-gray-500">Belum ada artikel edukasi yang tersedia.</p>
             @endforelse
         </div>
+
+        {{-- Tombol "Lihat Semua Artikel" --}}
+        <div class="mt-10"> {{-- Memberikan spasi dari grid di atas --}}
+            <a href=""
+            class="inline-block bg-[#4a2c1f] text-white py-3 px-6 rounded-lg text-lg font-semibold hover:bg-[#341d13] transition">
+                Lihat Semua Artikel
+            </a>
+        </div>
+
     </section>
+    {{-- === AKHIR BAGIAN ARTIKEL EDUKASI YANG SUDAH DIKOREKSI === --}}
+
+        {{-- Galeri --}}
+        <section class="container mx-auto mt-12 px-6">
+            <h2 class="text-3xl font-bold text-center text-[#4a2c1f] mb-6">Galeri Adopsi Berhasil</h2>
+            <div class="flex flex-wrap justify-center gap-6">
+                @forelse($hewansDiadopsi as $hewan)
+                    <div class="shadow-lg rounded-xl overflow-hidden w-40 h-40 flex items-center justify-center bg-white">
+                        <img src="{{ asset('storage/' . $hewan->gambar) }}" alt="Adopsi Berhasil: {{ $hewan->nama }}" class="object-cover w-full h-full">
+                    </div>
+                @empty
+                    <p class="text-gray-500">Belum ada galeri adopsi berhasil.</p>
+                @endforelse
+            </div>
+        </section>
 
     {{-- Footer --}}
     <footer class="bg-[#4a2c1f] text-white py-6 text-center mt-12">
         <p>&copy; 2025 AdoptMe | Semua Hak Cipta Dilindungi</p>
     </footer>
-
-    {{-- WhatsApp Button --}}
-    <a href="https://wa.me/{{ urlencode('62812118001') }}" class="fixed bottom-6 right-6 bg-green-500 text-white px-4 py-2 rounded-full shadow-lg">
-        Chat via WhatsApp
-    </a>
 
     {{-- Modal Login --}}
     <div id="loginModal" class="hidden fixed inset-0 bg-black bg-opacity-50 items-center justify-center z-50">

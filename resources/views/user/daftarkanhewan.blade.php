@@ -1,17 +1,4 @@
-{{-- resources/views/daftarkanhewan.blade.php --}}
-
-{{-- Gunakan x-app-layout untuk halaman yang membutuhkan layout autentikasi --}}
-{{-- Anda bisa menambahkan @auth dan @else jika ingin guest-layout untuk non-login,
-     tapi untuk daftarkan hewan, biasanya hanya user login yang bisa --}}
 <x-app-layout>
-    {{-- Anda bisa menambahkan slot header jika ingin, contoh:
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Daftarkan Hewan') }}
-        </h2>
-    </x-slot>
-    --}}
-
     <div class="container mx-auto py-12 px-4">
         <h1 class="text-3xl font-bold text-center text-[#8b5e34] mb-6">Daftarkan Hewan untuk Diadopsi</h1>
 
@@ -62,4 +49,21 @@
             </button>
         </form>
     </div>
+
+    {{-- SweetAlert2 CDN & Flash Message --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            @if (Session::has('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: @json(Session::get('success')),
+                    confirmButtonColor: '#A0522D',
+                    background: '#fef8f4',
+                    color: '#5c3b19'
+                });
+            @endif
+        });
+    </script>
 </x-app-layout>

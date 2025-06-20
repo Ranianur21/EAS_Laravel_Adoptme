@@ -27,44 +27,63 @@ class LoginController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function login(Request $request)
-    {
-        // Validasi input
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-        ], [
-            'email.required' => '⚠️ Email wajib diisi!',
-            'email.email' => '⚠️ Format email tidak valid!',
-            'password.required' => '⚠️ Password wajib diisi!',
+public function login(Request $request)
+{
+    // Validasi input
+    $request->validate([
+        'email' => 'required|email',
+        'password' => 'required',
+    ], [
+        'email.required' => '⚠️ Email wajib diisi!',
+        'email.email' => '⚠️ Format email tidak valid!',
+        'password.required' => '⚠️ Password wajib diisi!',
+    ]);
+
+    $credentials = $request->only('email', 'password');
+
+    // Percobaan otentikasi menggunakan Auth::attempt()
+    if (Auth::attempt($credentials)) {
+        // Regenerate session untuk keamanan
+        $request->session()->regenerate();
+        
+        $user = Auth::user();
+        
+        // DEBUG: Cek nilai role (hapus setelah masalah teratasi)
+        \Log::info('User Login Debug', [
+            'user_id' => $user->id,
+            'email' => $user->email,
+            'role' => $user->role,
+            'role_type' => gettype($user->role)
         ]);
+        
+        // Simpan peran pengguna ke sesi
+        $request->session()->put('role', $user->role);
 
-        $credentials = $request->only('email', 'password');
+        // Pastikan role dalam bentuk string dan trim whitespace
+        $userRole = trim(strtolower($user->role));
 
-        // Percobaan otentikasi menggunakan Auth::attempt()
-        // Ini akan mencari pengguna di database melalui model Pengguna,
-        // memverifikasi password, dan jika berhasil, mengelola sesi.
-        if (Auth::attempt($credentials)) {
-            $user = Auth::user(); // Dapatkan objek pengguna yang berhasil login
-
-            // Simpan peran pengguna ke sesi untuk middleware dan akses mudah
-            $request->session()->put('role', $user->role);
-
-            // Arahkan pengguna berdasarkan perannya
-            if ($user->role === 'admin') {
-                // Redirect ke dashboard admin dan berikan flash message
-                return redirect()->intended('/admin/dashboard')->with('success', '✅ Login berhasil sebagai Admin!');
-            } else {
-                // Redirect ke halaman utama untuk pengguna biasa
-                return redirect()->intended('/')->with('success', '✅ Login berhasil!');
-            }
+        // Arahkan pengguna berdasarkan perannya
+        if ($userRole === 'admin') {
+            // Redirect ke dashboard admin
+            return redirect()->route('dashboard.admin')
+                           ->with('success', '✅ Login berhasil sebagai Admin!');
+        } elseif ($userRole === 'user') {
+            // Redirect ke dashboard user
+            return redirect()->route('dashboard.user')
+                           ->with('success', '✅ Login berhasil sebagai User!');
+        } else {
+            // Jika role tidak dikenali, logout dan redirect dengan error
+            Auth::logout();
+            return redirect()->route('login')
+                           ->with('error', '❌ Role pengguna tidak valid: ' . $user->role);
         }
-
-        // Jika otentikasi gagal, kembali ke form login dengan pesan error
-        return back()->withErrors([
-            'email' => '⚠️ Email atau password salah!', // Pesan error jika kredensial tidak cocok
-        ])->onlyInput('email'); // Mempertahankan input email yang sebelumnya dimasukkan
     }
+
+    // Jika otentikasi gagal
+    return back()->withErrors([
+        'email' => '⚠️ Email atau password salah!',
+    ])->onlyInput('email');
+}
 
     /**
      * Menangani proses logout.

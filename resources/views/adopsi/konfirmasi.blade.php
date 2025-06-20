@@ -21,11 +21,11 @@
                     <div class="mt-8 flex flex-col space-y-4">
                         {{-- Tombol untuk kembali ke Dashboard --}}
                         <a href="{{ route('dashboard') }}" class="inline-block px-6 py-3 font-semibold rounded-md shadow-md" style="background-color: #A0522D; color: #FFFFFF; text-decoration: none;">
-                            Kembali ke Dashboard
+                           Lihat Riwayat Adopsi Saya 
                         </a>
                         {{-- Tombol untuk melihat Riwayat Adopsi di Profil --}}
                         <a href="{{ route('profil') }}" class="inline-block px-6 py-3 font-semibold rounded-md border border-gray-400" style="background-color: #FFFFFF; color: #A0522D; text-decoration: none;">
-                            Lihat Riwayat Adopsi Saya
+                            Kembali ke Dashboard
                         </a>
                     </div>
                 </div>

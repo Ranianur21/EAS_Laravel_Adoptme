@@ -5,7 +5,12 @@
             <h1 class="text-4xl font-bold">Temukan Sahabat Barumu</h1>
             <p class="mt-2 text-lg">Berikan mereka rumah yang penuh kasih 💕</p>
         </header>
-
+ <!-- Success/Error Messages -->
+        @if(session('success'))
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                {{ session('success') }}
+            </div>
+        @endif
         <section class="container mx-auto mt-12 text-center px-6">
             <h2 class="text-2xl font-semibold text-[#4a2c1f]">Filter Hewan</h2>
             <div class="flex justify-center gap-4 mt-4">
@@ -204,6 +209,7 @@
                         <p class="mt-2 text-gray-600 text-sm">{{ $hewan->jenis_kelamin }}, {{ $hewan->usia }} tahun</p>
                         <p class="mt-2 text-gray-700 text-sm">{!! nl2br(e($hewan->deskripsi)) !!}</p>
                         <div class="flex justify-center space-x-4 mt-4">
+
                             @auth
                                 {{-- PERBAIKAN DI SINI: Sudah benar karena variabel loop sekarang $hewan --}}
                                 <a href="{{ route('adopsi.form', ['hewan_id' => $hewan->id]) }}"
@@ -232,7 +238,7 @@
                         Lorem ipsum dolor, sit amet consectetur adipisicing elit. Et, libero? Iusto, consequuntur praesentium possimus iure, quas facilis perferendis ad eum nam in voluptas officiis explicabo aliquam maxime illum. Ipsum, alias.
                     </p>
                     @auth
-                        <a href="{{ route('daftarkanhewan.store') }}"
+                        <a href="{{ route('daftarkanhewan.form') }}"
                         class="bg-white text-[#8b5e34] font-bold px-8 py-3 rounded-lg shadow-lg hover:bg-gray-100 transition duration-300">
                             Ayo daftarkan!
                         </a>

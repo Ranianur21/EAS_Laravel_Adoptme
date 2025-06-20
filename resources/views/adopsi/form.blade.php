@@ -131,125 +131,126 @@
         </div>
     </div>
 
-<script>
-    let currentStep = 1;
-    const totalSteps = 4;
-    const steps = document.querySelectorAll('.step');
-    const stepIndicators = document.querySelectorAll('[id^="step-"][id$="-indicator"]');
-    const form = document.getElementById('adopsiForm');
+    <script>
+        // Javascript untuk langkah-langkah form, validasi dan review
+        let currentStep = 1;
+        const totalSteps = 4;
+        const steps = document.querySelectorAll('.step');
+        const stepIndicators = document.querySelectorAll('[id^="step-"][id$="-indicator"]');
+        const form = document.getElementById('adopsiForm');
 
-    function showStep(step) {
-        steps.forEach(s => s.classList.add('hidden'));
-        stepIndicators.forEach(indicator => indicator.classList.remove('bg-[#8b5e34]', 'text-white'));
+        function showStep(step) {
+            steps.forEach(s => s.classList.add('hidden'));
+            stepIndicators.forEach(indicator => indicator.classList.remove('bg-[#8b5e34]', 'text-white'));
 
-        document.getElementById(`step-${step}`).classList.remove('hidden');
-        document.getElementById(`step-${step}-indicator`).classList.add('bg-[#8b5e34]', 'text-white');
-    }
+            document.getElementById(`step-${step}`).classList.remove('hidden');
+            document.getElementById(`step-${step}-indicator`).classList.add('bg-[#8b5e34]', 'text-white');
+        }
 
-    function validateStep(step) {
-        let isValid = true;
-        let firstInvalidField = null;
+        function validateStep(step) {
+            let isValid = true;
+            let firstInvalidField = null;
 
-        if (step === 1) {
-            const alasanField = document.getElementById('alasan');
-            if (!alasanField.value.trim() || alasanField.value.trim().length < 20) {
-                isValid = false;
-                if (!alasanField.value.trim()) {
-                    alert('Alasan mengadopsi tidak boleh kosong.');
-                } else {
-                    alert('Alasan mengadopsi minimal 20 karakter.');
+            if (step === 1) {
+                const alasanField = document.getElementById('alasan');
+                if (!alasanField.value.trim() || alasanField.value.trim().length < 20) {
+                    isValid = false;
+                    if (!alasanField.value.trim()) {
+                        alert('Alasan mengadopsi tidak boleh kosong.');
+                    } else {
+                        alert('Alasan mengadopsi minimal 20 karakter.');
+                    }
+                    firstInvalidField = alasanField;
                 }
-                firstInvalidField = alasanField;
-            }
-        } else if (step === 3) {
-            const ktpField = document.getElementById('ktp');
-            const suratPernyataanField = document.getElementById('surat_pernyataan');
+            } else if (step === 3) {
+                const ktpField = document.getElementById('ktp');
+                const suratPernyataanField = document.getElementById('surat_pernyataan');
 
-            // Logika validasi KTP
+                // Logika validasi KTP
+                const userHasKtpInProfile = "{{ Auth::user()->path_foto_ktp ? 'true' : 'false' }}" === 'true';
+
+                if (!userHasKtpInProfile && !ktpField.files.length) {
+                    isValid = false;
+                    alert('Anda belum mengunggah KTP di profil. Harap unggah KTP pada form ini.');
+                    firstInvalidField = ktpField;
+                }
+
+                // Logika validasi Surat Pernyataan
+                if (isValid && !suratPernyataanField.files.length) { // Pastikan isValid masih true sebelum cek ini
+                    isValid = false;
+                    alert('Surat Pernyataan wajib diunggah.');
+                    firstInvalidField = suratPernyataanField;
+                }
+            }
+
+            if (!isValid && firstInvalidField) {
+                firstInvalidField.focus();
+            }
+            return isValid;
+        }
+
+        function updateReviewStep() {
+            document.getElementById('review-hewan-nama').textContent = "{{ $hewan->nama }}";
+            document.getElementById('review-hewan-jenis').textContent = "{{ $hewan->jenis }}";
+            document.getElementById('review-alasan').textContent = document.getElementById('alasan').value;
+
             const userHasKtpInProfile = "{{ Auth::user()->path_foto_ktp ? 'true' : 'false' }}" === 'true';
+            const ktpUploadedInForm = document.getElementById('ktp').files.length > 0;
 
-            if (!userHasKtpInProfile && !ktpField.files.length) {
-                isValid = false;
-                alert('Anda belum mengunggah KTP di profil. Harap unggah KTP pada form ini.');
-                firstInvalidField = ktpField;
+            let ktpStatus = '';
+            if (userHasKtpInProfile && !ktpUploadedInForm) {
+                ktpStatus = 'Sudah ada di profil';
+            } else if (ktpUploadedInForm) {
+                ktpStatus = 'Diunggah baru';
+            } else {
+                ktpStatus = 'Belum ada'; // Seharusnya tidak terjadi jika validasi berfungsi
             }
+            document.getElementById('review-ktp-status').textContent = ktpStatus;
 
-            // Logika validasi Surat Pernyataan
-            if (isValid && !suratPernyataanField.files.length) { // Pastikan isValid masih true sebelum cek ini
-                isValid = false;
-                alert('Surat Pernyataan wajib diunggah.');
-                firstInvalidField = suratPernyataanField;
-            }
+            const suratUploaded = document.getElementById('surat_pernyataan').files.length > 0;
+            document.getElementById('review-surat-status').textContent = suratUploaded ? 'Sudah diunggah' : 'Belum diunggah';
         }
 
-        if (!isValid && firstInvalidField) {
-            firstInvalidField.focus();
-        }
-        return isValid;
-    }
 
-    function updateReviewStep() {
-        document.getElementById('review-hewan-nama').textContent = "{{ $hewan->nama }}";
-        document.getElementById('review-hewan-jenis').textContent = "{{ $hewan->jenis }}";
-        document.getElementById('review-alasan').textContent = document.getElementById('alasan').value;
-
-        const userHasKtpInProfile = "{{ Auth::user()->path_foto_ktp ? 'true' : 'false' }}" === 'true';
-        const ktpUploadedInForm = document.getElementById('ktp').files.length > 0;
-
-        let ktpStatus = '';
-        if (userHasKtpInProfile && !ktpUploadedInForm) {
-            ktpStatus = 'Sudah ada di profil';
-        } else if (ktpUploadedInForm) {
-            ktpStatus = 'Diunggah baru';
-        } else {
-            ktpStatus = 'Belum ada'; // Seharusnya tidak terjadi jika validasi berfungsi
-        }
-        document.getElementById('review-ktp-status').textContent = ktpStatus;
-
-        const suratUploaded = document.getElementById('surat_pernyataan').files.length > 0;
-        document.getElementById('review-surat-status').textContent = suratUploaded ? 'Sudah diunggah' : 'Belum diunggah';
-    }
-
-
-    function nextStep(stepNumber) {
-        if (validateStep(stepNumber)) {
-            if (currentStep < totalSteps) {
-                currentStep++;
-                if (currentStep === totalSteps) { // Jika masuk ke step review
-                    updateReviewStep();
+        function nextStep(stepNumber) {
+            if (validateStep(stepNumber)) {
+                if (currentStep < totalSteps) {
+                    currentStep++;
+                    if (currentStep === totalSteps) { // Jika masuk ke step review
+                        updateReviewStep();
+                    }
+                    showStep(currentStep);
                 }
+            }
+        }
+
+        function prevStep() {
+            if (currentStep > 1) {
+                currentStep--;
                 showStep(currentStep);
             }
         }
-    }
 
-    function prevStep() {
-        if (currentStep > 1) {
-            currentStep--;
+        document.addEventListener('DOMContentLoaded', () => {
             showStep(currentStep);
-        }
-    }
 
-    document.addEventListener('DOMContentLoaded', () => {
-        showStep(currentStep);
-
-        // Tambahkan event listener untuk menangkap error validasi dari Laravel (jika ada)
-        // Ini akan mengarahkan ke step yang benar jika validasi Laravel gagal
-        @if ($errors->any())
-            let firstErrorFieldStep = 1; // Default ke step 1
-            @if ($errors->has('alasan'))
-                firstErrorFieldStep = 1;
-            @elseif ($errors->has('ktp') || $errors->has('surat_pernyataan'))
-                firstErrorFieldStep = 3;
+            // Tambahkan event listener untuk menangkap error validasi dari Laravel (jika ada)
+            // Ini akan mengarahkan ke step yang benar jika validasi Laravel gagal
+            @if ($errors->any())
+                let firstErrorFieldStep = 1; // Default ke step 1
+                @if ($errors->has('alasan'))
+                    firstErrorFieldStep = 1;
+                @elseif ($errors->has('ktp') || $errors->has('surat_pernyataan'))
+                    firstErrorFieldStep = 3;
+                @endif
+                currentStep = firstErrorFieldStep;
+                showStep(currentStep);
+                // Scroll to the first error field if needed
+                const firstErrorElement = document.querySelector('.border-red-500');
+                if (firstErrorElement) {
+                    firstErrorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
             @endif
-            currentStep = firstErrorFieldStep;
-            showStep(currentStep);
-            // Scroll to the first error field if needed
-            const firstErrorElement = document.querySelector('.border-red-500');
-            if (firstErrorElement) {
-                firstErrorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-        @endif
-    });
-</script>
+        });
+    </script>
 </x-app-layout>

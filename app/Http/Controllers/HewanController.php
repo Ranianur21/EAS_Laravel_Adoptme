@@ -6,6 +6,7 @@ use App\Models\Hewan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\View\View; 
 
 class HewanController extends Controller
 {
@@ -72,6 +73,19 @@ class HewanController extends Controller
             'user_id' => Auth::id(), // Jika ada sistem user login
         ]);
 
-        return redirect()->route('hewan.index')->with('success', 'Hewan berhasil didaftarkan untuk diadopsi!');
+        return redirect()->route('/hewan')->with('success', 'Hewan berhasil didaftarkan untuk diadopsi!');
+    }
+/**
+     * Menampilkan detail satu hewan. (Jika ada fitur ini)
+     *
+     * @param int $id ID Hewan
+     * @return \Illuminate\View\View
+     */
+    public function show($id): View
+    {
+        $hewan = Hewan::findOrFail($id);
+        // Asumsi ada view 'user.hewan_detail' atau 'hewan.show'
+        return view('user.hewan_detail', compact('hewan'));
     }
 }
+

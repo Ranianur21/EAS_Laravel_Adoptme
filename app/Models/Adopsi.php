@@ -10,25 +10,27 @@ class Adopsi extends Model
     use HasFactory;
 
     protected $table = 'adopsi';
+    
+    // // Disable timestamps karena tabel tidak memiliki created_at dan updated_at
+    // public $timestamps = false;
 
     protected $fillable = [
         'user_id',
         'hewan_id',
-        'alasan', // ditambahkan agar alasan tersimpan
-        'path_foto_ktp', // kolom untuk path file KTP
-        'path_surat_pernyataan', // kolom untuk path surat
+        'alasan',
+        'ktp',
+        'surat_pernyataan',
         'status',
     ];
 
-    // Relasi ke pengguna
+    // Relationships
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    // Relasi ke hewan
     public function hewan()
     {
-        return $this->belongsTo(Hewan::class, 'hewan_id');
+        return $this->belongsTo(Hewan::class);
     }
 }
