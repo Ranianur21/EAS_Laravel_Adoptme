@@ -70,10 +70,6 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/profil/update', [UserProfileController::class, 'updateProfile'])->name('update_profil');
     Route::get('/adopsi-riwayat', [UserProfileController::class, 'showAdopsiHistory'])->name('adopsi.riwayat'); //riwayat adopsi
 
-    Route::get('/panduan', function () {
-        return view('panduan');
-    })->name('panduan');
-
     // Daftarkan hewan
     Route::get('/daftarkanhewan', [HewanController::class, 'daftarkanHewanForm'])->name('daftarkanhewan.form');
     Route::post('/daftarkanhewan', [HewanController::class, 'store'])->name('daftarkanhewan.store');

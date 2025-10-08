@@ -37,8 +37,10 @@
     </div>
 </section>
 
-<footer class="bg-[#4a2c1f] text-white py-6 text-center mt-12">
-    <p>&copy; {{ date('Y') }} AdoptMe | Semua Hak Cipta Dilindungi</p>
+<<!-- Footer -->
+<footer class="bg-[#4a2c1f] text-white py-6 text-center">
+    <p>&copy; 2025 AdoptMe - Temukan Sahabat Sejatimu</p>
+    <p>Jl. Mawar No. 49, Surabaya | Email: kontak@adoptme.com</p>
 </footer>
 </body>
 </html>

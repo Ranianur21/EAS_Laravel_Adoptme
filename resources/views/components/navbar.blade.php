@@ -6,7 +6,7 @@
 
         <div class="flex space-x-6 items-center">
             {{-- Navigasi Umum --}}
-            <x-nav-link href="{{ route('home') }}" :active="request()->routeIs('home')">Home</x-nav-link>
+            <x-nav-link href="{{ route('home') }}" :active="request()->routeIs('home')">Beranda</x-nav-link>
             <x-nav-link href="{{ route('tentang') }}" :active="request()->routeIs('tentang')">Tentang</x-nav-link>
             <x-nav-link href="{{ route('hewan') }}" :active="request()->routeIs('hewan')">Hewan</x-nav-link>
             <x-nav-link href="{{ route('kontak') }}" :active="request()->routeIs('kontak')">Kontak</x-nav-link>
