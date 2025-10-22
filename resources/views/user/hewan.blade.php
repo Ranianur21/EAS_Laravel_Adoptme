@@ -54,24 +54,17 @@
             </div>
         </section>
 
-        <div class="bg-[#8b5e34] shadow-md py-10 text-white p-4">
+       <div class="bg-[#8b5e34] shadow-md py-10 text-white p-4">
             <div class="container mx-auto flex flex-col md:flex-row items-center justify-center gap-8">
                 <div class="md:w-1/2 text-center md:text-left px-4">
                     <h1 class="text-4xl font-bold">Mau daftarkan hewanmu untuk diadopsi?</h1>
                     <p class="mt-4 mb-6">
-                        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Et, libero? Iusto, consequuntur praesentium possimus iure, quas facilis perferendis ad eum nam in voluptas officiis explicabo aliquam maxime illum. Ipsum, alias.
+                        Bantu hewan kesayanganmu menemukan keluarga baru yang penuh cinta! Yuk, bantu mereka mendapatkan keluarga impian!
                     </p>
-                    @auth
-                        <a href="{{ route('daftarkanhewan.store') }}"
-                        class="bg-white text-[#8b5e34] font-bold px-8 py-3 rounded-lg shadow-lg hover:bg-gray-100 transition duration-300">
-                            Ayo daftarkan!
-                        </a>
-                    @else
-                        <button onclick="showLoginModal()"
-                            class="bg-white text-[#8b5e34] font-bold px-8 py-3 rounded-lg shadow-lg hover:bg-gray-100 transition duration-300">
-                            Ayo daftarkan!
-                        </button>
-                    @endauth
+                    <a href="{{ route('daftarkanhewan.form') }}"
+                    class="bg-white text-[#8b5e34] font-bold px-8 py-3 rounded-lg shadow-lg hover:bg-gray-100 transition duration-300">
+                        Ayo daftarkan!
+                    </a>
                 </div>
                 <div class="mt-8 md:mt-0 md:w-1/2 flex justify-center">
                     <div class="relative w-full max-w-sm h-72 overflow-hidden rounded-lg shadow-lg">
@@ -112,7 +105,9 @@
         </section>
 
         <footer class="bg-[#4a2c1f] text-white py-6 text-center mt-12">
-            <p>&copy; 2025 AdoptMe | Semua Hak Cipta Dilindungi</p>
+    <p>&copy; 2025 AdoptMe - Temukan Sahabat Sejatimu</p>
+    <p>Jl. Mawar No. 49, Surabaya | Email: kontak@adoptme.com</p>
+</footer>
         </footer>
 
         <a href="https://wa.me/{{ urlencode('62812118001') }}" class="fixed bottom-6 right-6 bg-green-500 text-white px-4 py-2 rounded-full shadow-lg">
