@@ -209,7 +209,25 @@
                 hideDeleteModal();
             }
         });
+// === KONFIRMASI UNTUK SETUJUI DAN TOLAK ===
+        document.addEventListener('DOMContentLoaded', () => {
+            const approveButtons = document.querySelectorAll('form input[value="Disetujui"]');
+            const rejectButtons = document.querySelectorAll('form input[value="Ditolak"]');
 
+            approveButtons.forEach(input => {
+                input.closest('form').addEventListener('submit', e => {
+                    const confirmApprove = confirm('Apakah Anda yakin ingin MENYETUJUI pengajuan ini?');
+                    if (!confirmApprove) e.preventDefault();
+                });
+            });
+
+            rejectButtons.forEach(input => {
+                input.closest('form').addEventListener('submit', e => {
+                    const confirmReject = confirm('Apakah Anda yakin ingin MENOLAK pengajuan ini?');
+                    if (!confirmReject) e.preventDefault();
+                });
+            });
+        });
 
     </script>
 </body>
