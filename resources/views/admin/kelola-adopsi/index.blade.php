@@ -228,7 +228,10 @@
                 });
             });
         });
-
+      // === KONFIRMASI UNTUK HAPUS ===
+        document.getElementById('deleteForm').addEventListener('submit', function(e) {
+            const confirmDelete = confirm('Apakah Anda benar-benar ingin menghapus data ini? Tindakan ini tidak dapat dibatalkan.');
+            if (!confirmDelete) e.preventDefault();
     </script>
 </body>
 </html>
