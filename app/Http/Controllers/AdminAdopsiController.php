@@ -14,7 +14,7 @@ class AdminAdopsiController extends Controller
 {
     // Mengambil data Adopsi dan memuat relasi Pengguna
     $adopsi = Adopsi::with('user') // Memuat relasi pengguna
-                    ->orderBy('user_id', 'desc')
+                    ->orderBy('created_at', 'desc')
                     ->paginate(15);
 
     // Mengirim data ke view
@@ -73,5 +73,18 @@ public function destroy($id)
     return redirect()->back()->with('success', 'Data adopsi berhasil dihapus!');
 }
 
+public function approve($id) {
+    $adopsi = Adopsi::findOrFail($id);
+    $adopsi->status = 'Disetujui';
+    $adopsi->save();
+    return redirect()->route('adopsi.index')->with('success', 'Adopsi berhasil disetujui');
+}
+
+public function reject($id) {
+    $adopsi = Adopsi::findOrFail($id);
+    $adopsi->status = 'Ditolak';
+    $adopsi->save();
+    return redirect()->route('adopsi.index')->with('success', 'Adopsi berhasil ditolak');
+}
 
 }

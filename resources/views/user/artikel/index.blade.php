@@ -18,8 +18,7 @@
     <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
         @forelse($artikels as $artikel)
             <div class="bg-white rounded-lg shadow-md overflow-hidden border border-[#8b5e34]">
-                {{-- SESUAIKAN: Ambil gambar dari kolom 'image_url' --}}
-                <img src="{{ asset('storage/' . $artikel->image_url) }}" alt="{{ $artikel->title }}" class="w-full h-48 object-cover">
+                <img src="{{ asset('assets/images/' . $artikel->image_url) }}"alt="{{ $artikel->title }}"class="w-full h-48 object-cover">
                 <div class="p-6">
                     {{-- SESUAIKAN: Tampilkan judul dari kolom 'title' --}}
                     <h3 class="text-xl font-bold text-[#8b5e34] mb-2">{{ $artikel->title }}</h3>

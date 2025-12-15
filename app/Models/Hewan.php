@@ -30,7 +30,7 @@ class Hewan extends Model
      */
     public function adopsi(): HasMany
     {
-        return $this->hasMany(Adopsi::class);
+        return $this->hasMany(Adopsi::class, 'hewan_id');
     }
 
     /**

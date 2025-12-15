@@ -84,26 +84,18 @@
                             <td class="px-4 py-3 text-sm space-x-2">
                                 <!-- Edit Status Buttons -->
                                 @if($a->status == 'Menunggu Konfirmasi')
-                                    <form action="{{ route('adopsi.updateStatus', $a->id) }}" method="POST" class="inline">
-                                        @csrf
-                                        @method('PATCH')
-                                        <input type="hidden" name="status" value="Disetujui">
-                                        <button type="submit" class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-xs font-medium transition-colors">
-                                            Setujui
-                                        </button>
-                                    </form>
-                                    <form action="{{ route('adopsi.updateStatus', $a->id) }}" method="POST" class="inline">
-                                        @csrf
-                                        @method('PATCH')
-                                        <input type="hidden" name="status" value="Ditolak">
-                                        <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs font-medium transition-colors">
-                                            Tolak
-                                        </button>
-                                    </form>
+                                    <button onclick="showConfirmModal('approve', {{ $a->id }}, '{{ $a->user->name ?? 'N/A' }}', '{{ $a->hewan->nama ?? 'N/A' }}')" 
+                                            class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-xs font-medium transition-colors">
+                                        Setujui
+                                    </button>
+                                    <button onclick="showConfirmModal('reject', {{ $a->id }}, '{{ $a->user->name ?? 'N/A' }}', '{{ $a->hewan->nama ?? 'N/A' }}')" 
+                                            class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs font-medium transition-colors">
+                                        Tolak
+                                    </button>
                                 @endif
                                 
                                 <!-- Delete Button -->
-                                <button onclick="showDeleteModal({{ $a->adopsi_id }}, '{{ $a->pengguna->name ?? 'N/A' }}', '{{ $a->hewan->nama ?? 'N/A' }}')" 
+                                <button onclick="showConfirmModal('delete', {{ $a->id }}, '{{ $a->user->name ?? 'N/A' }}', '{{ $a->hewan->nama ?? 'N/A' }}')" 
                                         class="bg-gray-500 hover:bg-gray-600 text-white px-3 py-1 rounded text-xs font-medium transition-colors">
                                     Hapus
                                 </button>
@@ -163,75 +155,133 @@
     </main>
 
     <!-- Delete Modal -->
-    <div id="deleteModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+    <div id="confirmModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
         <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="bg-white rounded-lg max-w-md w-full p-6">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">Konfirmasi Hapus</h3>
-                <p class="text-gray-600 mb-6">
-                    Apakah Anda yakin ingin menghapus data adopsi untuk pengguna 
-                    <span id="penggunaName" class="font-semibold"></span> 
-                    dan hewan <span id="hewanName" class="font-semibold"></span>? 
-                    Tindakan ini tidak dapat dibatalkan.
-                </p>
+            <div class="bg-white rounded-lg max-w-md w-full p-6 shadow-xl">
+                <div class="flex items-center mb-4">
+                    <div id="modalIcon" class="w-12 h-12 rounded-full flex items-center justify-center mr-4">
+                        <!-- Icon akan diisi oleh JavaScript -->
+                    </div>
+                    <h3 id="modalTitle" class="text-lg font-semibold text-gray-900"></h3>
+                </div>
+                <p id="modalMessage" class="text-gray-600 mb-6 ml-16"></p>
                 <div class="flex justify-end space-x-4">
-                    <button onclick="hideDeleteModal()" class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded-lg font-medium transition-colors">
+                    <button onclick="hideConfirmModal()" class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded-lg font-medium transition-colors">
                         Batal
                     </button>
-                    <form id="deleteForm" action="" method="POST" class="inline">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
-                            Hapus
-                        </button>
-                    </form>
+                    <button id="confirmButton" onclick="executeAction()" class="px-4 py-2 rounded-lg font-medium transition-colors">
+                        Konfirmasi
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Hidden forms untuk submit actions -->
+    <form id="approveForm" action="" method="POST" style="display: none;">
+        @csrf
+    </form>
+
+    <form id="rejectForm" action="" method="POST" style="display: none;">
+        @csrf
+    </form>
+
+    <form id="deleteForm" action="" method="POST" style="display: none;">
+        @csrf
+        @method('DELETE')
+    </form>
+
     <script>
-        // Show delete modal
-        function showDeleteModal(adopsiId, penggunaName, hewanName) {
-            document.getElementById('penggunaName').textContent = penggunaName;
-            document.getElementById('hewanName').textContent = hewanName;
-            document.getElementById('deleteForm').action = `/adopsi/${adopsiId}`;
-            document.getElementById('deleteModal').classList.remove('hidden');
+        let currentAction = null;
+        let currentId = null;
+
+        function showConfirmModal(action, id, penggunaName, hewanName) {
+            currentAction = action;
+            currentId = id;
+            
+            const modal = document.getElementById('confirmModal');
+            const modalIcon = document.getElementById('modalIcon');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalMessage = document.getElementById('modalMessage');
+            const confirmButton = document.getElementById('confirmButton');
+            
+            // Konfigurasi modal berdasarkan aksi
+            if (action === 'approve') {
+                modalIcon.innerHTML = `
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                `;
+                modalIcon.className = 'w-12 h-12 rounded-full flex items-center justify-center mr-4 bg-green-500';
+                modalTitle.textContent = 'Konfirmasi Persetujuan';
+                modalMessage.innerHTML = `Apakah Anda yakin ingin <strong>menyetujui</strong> pengajuan adopsi dari <strong>${penggunaName}</strong> untuk hewan <strong>${hewanName}</strong>?`;
+                confirmButton.textContent = 'Setujui';
+                confirmButton.className = 'bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-colors';
+            } else if (action === 'reject') {
+                modalIcon.innerHTML = `
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                `;
+                modalIcon.className = 'w-12 h-12 rounded-full flex items-center justify-center mr-4 bg-red-500';
+                modalTitle.textContent = 'Konfirmasi Penolakan';
+                modalMessage.innerHTML = `Apakah Anda yakin ingin <strong>menolak</strong> pengajuan adopsi dari <strong>${penggunaName}</strong> untuk hewan <strong>${hewanName}</strong>?`;
+                confirmButton.textContent = 'Tolak';
+                confirmButton.className = 'bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors';
+            } else if (action === 'delete') {
+                modalIcon.innerHTML = `
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                    </svg>
+                `;
+                modalIcon.className = 'w-12 h-12 rounded-full flex items-center justify-center mr-4 bg-gray-600';
+                modalTitle.textContent = 'Konfirmasi Hapus';
+                modalMessage.innerHTML = `Apakah Anda yakin ingin <strong>menghapus</strong> data adopsi dari <strong>${penggunaName}</strong> untuk hewan <strong>${hewanName}</strong>? <br><span class="text-red-600 font-semibold">Tindakan ini tidak dapat dibatalkan.</span>`;
+                confirmButton.textContent = 'Hapus';
+                confirmButton.className = 'bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-medium transition-colors';
+            }
+            
+            modal.classList.remove('hidden');
         }
 
-        // Hide delete modal
-        function hideDeleteModal() {
-            document.getElementById('deleteModal').classList.add('hidden');
+        function hideConfirmModal() {
+            document.getElementById('confirmModal').classList.add('hidden');
+            currentAction = null;
+            currentId = null;
         }
 
-        // Close modal when clicking outside
-        document.getElementById('deleteModal').addEventListener('click', function(e) {
+        function executeAction() {
+            if (!currentAction || !currentId) return;
+            
+            let form;
+            let actionUrl;
+            
+            if (currentAction === 'approve') {
+                form = document.getElementById('approveForm');
+                actionUrl = `/adopsi/${currentId}/approve`;
+            } else if (currentAction === 'reject') {
+                form = document.getElementById('rejectForm');
+                actionUrl = `/adopsi/${currentId}/reject`;
+            } else if (currentAction === 'delete') {
+                form = document.getElementById('deleteForm');
+                actionUrl = `/adopsi/${currentId}`;
+            }
+            
+            form.action = actionUrl;
+            form.submit();
+        }
+
+        document.getElementById('confirmModal').addEventListener('click', function(e) {
             if (e.target === this) {
-                hideDeleteModal();
+                hideConfirmModal();
             }
         });
-// === KONFIRMASI UNTUK SETUJUI DAN TOLAK ===
-        document.addEventListener('DOMContentLoaded', () => {
-            const approveButtons = document.querySelectorAll('form input[value="Disetujui"]');
-            const rejectButtons = document.querySelectorAll('form input[value="Ditolak"]');
 
-            approveButtons.forEach(input => {
-                input.closest('form').addEventListener('submit', e => {
-                    const confirmApprove = confirm('Apakah Anda yakin ingin MENYETUJUI pengajuan ini?');
-                    if (!confirmApprove) e.preventDefault();
-                });
-            });
-
-            rejectButtons.forEach(input => {
-                input.closest('form').addEventListener('submit', e => {
-                    const confirmReject = confirm('Apakah Anda yakin ingin MENOLAK pengajuan ini?');
-                    if (!confirmReject) e.preventDefault();
-                });
-            });
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                hideConfirmModal();
+            }
         });
-      // === KONFIRMASI UNTUK HAPUS ===
-        document.getElementById('deleteForm').addEventListener('submit', function(e) {
-            const confirmDelete = confirm('Apakah Anda benar-benar ingin menghapus data ini? Tindakan ini tidak dapat dibatalkan.');
-            if (!confirmDelete) e.preventDefault();
     </script>
 </body>
 </html>

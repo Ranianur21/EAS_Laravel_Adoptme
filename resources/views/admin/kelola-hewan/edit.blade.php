@@ -12,12 +12,15 @@
         <div class="flex justify-between items-center max-w-7xl mx-auto">
             <h1 class="text-xl font-semibold">Edit Hewan</h1>
             <div class="space-x-2">
-                <button onclick="logout()" class="bg-white text-amber-800 hover:bg-gray-100 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                <a href="{{ route('hewan.index') }}" class="bg-white text-amber-800 hover:bg-gray-100 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
                     Kembali
-                </button>
-                <button onclick="goBack()" class="bg-white text-amber-800 hover:bg-gray-100 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                    Logout
-                </button>
+                </a>
+                <form action="{{ route('logout') }}" method="POST" class="inline">
+                    @csrf
+                    <button type="submit" class="bg-white text-amber-800 hover:bg-gray-100 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                        Logout
+                    </button>
+                </form>
             </div>
         </div>
     </header>
@@ -112,20 +115,52 @@
                     
                     @if($hewan->gambar)
                         <div class="mt-4">
-                            <img src="{{ asset('storage/gambar_hewan/' . $hewan->gambar) }}" alt="Current Image" class="w-32 h-32 object-cover rounded-lg border border-gray-300">
+                            <!-- PERBAIKAN PATH: assets/gambar_hewan/ → assets/images/gambar_hewan/ -->
+                            <img src="{{ asset('assets/images/gambar_hewan/' . $hewan->gambar) }}" alt="Current Image" class="w-32 h-32 object-cover rounded-lg border border-gray-300">
+                            <p class="text-sm text-gray-500 mt-2">Gambar saat ini: {{ $hewan->gambar }}</p>
+                        </div>
+                    @else
+                        <div class="mt-4 p-4 bg-gray-100 rounded-lg">
+                            <p class="text-sm text-gray-500">Belum ada gambar untuk hewan ini.</p>
                         </div>
                     @endif
                 </div>
 
                 <!-- Submit Button -->
-                <div class="pt-6">
-                    <button type="submit" class="w-full bg-amber-800 hover:bg-amber-900 text-white py-3 px-6 rounded-lg font-medium text-lg transition-colors focus:ring-2 focus:ring-amber-500 focus:ring-offset-2">
+                <div class="pt-6 flex gap-4">
+                    <a href="{{ route('hewan.index') }}" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 py-3 px-6 rounded-lg font-medium text-lg transition-colors text-center">
+                        Batal
+                    </a>
+                    <button type="submit" class="flex-1 bg-amber-800 hover:bg-amber-900 text-white py-3 px-6 rounded-lg font-medium text-lg transition-colors focus:ring-2 focus:ring-amber-500 focus:ring-offset-2">
                         Perbarui Hewan
                     </button>
                 </div>
             </form>
         </div>
     </main>
+
+    <!-- Success/Error Messages -->
+    @if(session('success'))
+        <div class="fixed bottom-4 right-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded shadow-lg z-50" id="successMessage">
+            {{ session('success') }}
+        </div>
+        <script>
+            setTimeout(function() {
+                document.getElementById('successMessage').remove();
+            }, 5000);
+        </script>
+    @endif
+
+    @if(session('error'))
+        <div class="fixed bottom-4 right-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded shadow-lg z-50" id="errorMessage">
+            {{ session('error') }}
+        </div>
+        <script>
+            setTimeout(function() {
+                document.getElementById('errorMessage').remove();
+            }, 5000);
+        </script>
+    @endif
 
     <script>
         // Go back function

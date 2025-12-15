@@ -5,12 +5,14 @@
             <h1 class="text-4xl font-bold">Temukan Sahabat Barumu</h1>
             <p class="mt-2 text-lg">Berikan mereka rumah yang penuh kasih 💕</p>
         </header>
- <!-- Success/Error Messages -->
+        
+        <!-- Success/Error Messages -->
         @if(session('success'))
             <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
                 {{ session('success') }}
             </div>
         @endif
+        
         <section class="container mx-auto mt-12 text-center px-6">
             <h2 class="text-2xl font-semibold text-[#4a2c1f]">Filter Hewan</h2>
             <div class="flex justify-center gap-4 mt-4">
@@ -24,18 +26,17 @@
         <section class="container mx-auto py-12 text-center px-6">
             <h2 class="text-4xl font-bold text-[#4a2c1f] mb-6">Hewan yang Tersedia untuk Adopsi</h2>
             <div class="grid md:grid-cols-3 gap-6" id="hewan-list">
-                {{-- PERBAIKAN DI SINI: Menggunakan $hewan sebagai variabel loop --}}
                 @forelse($hewansTersedia as $hewan)
                     <div class="hewan-item bg-white p-6 border border-[#8b5e34] rounded-lg shadow-md flex flex-col justify-between h-full transition-transform duration-300 hover:scale-105" data-jenis="{{ $hewan->jenis }}">
                         <div class="w-full h-56 flex items-center justify-center bg-white">
-                            <img loading="lazy" src="{{asset('storage/gambar_hewan/' . $hewan->gambar) }}" alt="Foto {{ $hewan->nama }}" class="w-full h-full object-contain rounded-md">
+                            <!-- PERBAIKAN PATH: images/gambar_hewan/ → assets/images/gambar_hewan/ -->
+                            <img loading="lazy" src="{{ asset('assets/images/gambar_hewan/' . $hewan->gambar) }}" alt="Foto {{ $hewan->nama }}" class="w-full h-full object-contain rounded-md">
                         </div>
                         <h3 class="text-xl font-bold text-[#8b5e34] mt-3">{{ $hewan->nama }}</h3>
                         <p class="mt-2 text-gray-600 text-sm">{{ $hewan->jenis_kelamin }}, {{ $hewan->usia }} tahun</p>
                         <p class="mt-2 text-gray-700 text-sm">{!! nl2br(e($hewan->deskripsi)) !!}</p>
                         <div class="flex justify-center space-x-4 mt-4">
                             @auth
-                                {{-- PERBAIKAN DI SINI: Sudah benar karena variabel loop sekarang $hewan --}}
                                 <a href="{{ route('adopsi.form', ['hewan_id' => $hewan->id]) }}"
                                     class="bg-[#8b5e34] text-white px-4 py-2 rounded-lg shadow-md hover:bg-[#6b3f21] transition duration-300">
                                     Adopsi
@@ -54,7 +55,7 @@
             </div>
         </section>
 
-       <div class="bg-[#8b5e34] shadow-md py-10 text-white p-4">
+        <div class="bg-[#8b5e34] shadow-md py-10 text-white p-4">
             <div class="container mx-auto flex flex-col md:flex-row items-center justify-center gap-8">
                 <div class="md:w-1/2 text-center md:text-left px-4">
                     <h1 class="text-4xl font-bold">Mau daftarkan hewanmu untuk diadopsi?</h1>
@@ -68,7 +69,8 @@
                 </div>
                 <div class="mt-8 md:mt-0 md:w-1/2 flex justify-center">
                     <div class="relative w-full max-w-sm h-72 overflow-hidden rounded-lg shadow-lg">
-                        <img src="{{ asset('images/adopsi.jpg') }}" alt="Hewan Adopsi" class="w-full h-full object-cover">
+                        <!-- PERBAIKAN PATH: images/adopsi.jpg → assets/images/adopsi.jpg -->
+                        <img src="{{ asset('assets/images/adopsi.jpg') }}" alt="Hewan Adopsi" class="w-full h-full object-cover">
                     </div>
                 </div>
             </div>
@@ -93,10 +95,10 @@
         <section class="container mx-auto mt-12 px-6">
             <h2 class="text-3xl font-bold text-center text-[#4a2c1f] mb-6">Galeri Adopsi Berhasil</h2>
             <div class="flex flex-wrap justify-center gap-6">
-                {{-- PERBAIKAN DI SINI: Menggunakan $hewan sebagai variabel loop --}}
                 @forelse($hewansDiadopsi as $hewan)
                     <div class="shadow-lg rounded-xl overflow-hidden w-40 h-40 flex items-center justify-center bg-white">
-                        <img src="{{ asset('storage/gambar_hewan/' . $hewan->gambar) }}" alt="Adopsi Berhasil: {{ $hewan->nama }}" class="object-cover w-full h-full">
+                        <!-- PERBAIKAN PATH: assets/gambar_hewan/ → assets/images/gambar_hewan/ -->
+                        <img src="{{ asset('assets/images/gambar_hewan/' . $hewan->gambar) }}" alt="Adopsi Berhasil: {{ $hewan->nama }}" class="object-cover w-full h-full">
                     </div>
                 @empty
                     <p class="text-gray-500">Belum ada hewan yang ditampilkan di galeri adopsi berhasil.</p>
@@ -104,11 +106,10 @@
             </div>
         </section>
 
-        <footer class="bg-[#4a2c1f] text-white py-6 text-center mt-12">
+        <footer class="bg-[#4a2c1f] text-white py-6 text-center">
     <p>&copy; 2025 AdoptMe - Temukan Sahabat Sejatimu</p>
     <p>Jl. Mawar No. 49, Surabaya | Email: kontak@adoptme.com</p>
 </footer>
-        </footer>
 
         <a href="https://wa.me/{{ urlencode('62812118001') }}" class="fixed bottom-6 right-6 bg-green-500 text-white px-4 py-2 rounded-full shadow-lg">
             Chat via WhatsApp
@@ -194,19 +195,17 @@
         <section class="container mx-auto py-12 text-center px-6">
             <h2 class="text-4xl font-bold text-[#4a2c1f] mb-6">Hewan yang Tersedia untuk Adopsi</h2>
             <div class="grid md:grid-cols-3 gap-6" id="hewan-list">
-                {{-- PERBAIKAN DI SINI: Menggunakan $hewan sebagai variabel loop --}}
                 @forelse($hewansTersedia as $hewan)
                     <div class="hewan-item bg-white p-6 border border-[#8b5e34] rounded-lg shadow-md flex flex-col justify-between h-full transition-transform duration-300 hover:scale-105" data-jenis="{{ $hewan->jenis }}">
                         <div class="w-full h-56 flex items-center justify-center bg-white">
-                            <img loading="lazy" src="{{asset('storage/gambar_hewan/' . $hewan->gambar) }}" alt="Foto {{ $hewan->nama }}" class="w-full h-full object-contain rounded-md">
+                            <!-- PERBAIKAN PATH: assets/gambar_hewan/ → assets/images/gambar_hewan/ -->
+                            <img loading="lazy" src="{{ asset('assets/images/gambar_hewan/' . $hewan->gambar) }}" alt="Foto {{ $hewan->nama }}" class="w-full h-full object-contain rounded-md">
                         </div>
                         <h3 class="text-xl font-bold text-[#8b5e34] mt-3">{{ $hewan->nama }}</h3>
                         <p class="mt-2 text-gray-600 text-sm">{{ $hewan->jenis_kelamin }}, {{ $hewan->usia }} tahun</p>
                         <p class="mt-2 text-gray-700 text-sm">{!! nl2br(e($hewan->deskripsi)) !!}</p>
                         <div class="flex justify-center space-x-4 mt-4">
-
                             @auth
-                                {{-- PERBAIKAN DI SINI: Sudah benar karena variabel loop sekarang $hewan --}}
                                 <a href="{{ route('adopsi.form', ['hewan_id' => $hewan->id]) }}"
                                     class="bg-[#8b5e34] text-white px-4 py-2 rounded-lg shadow-md hover:bg-[#6b3f21] transition duration-300">
                                     Adopsi
@@ -230,7 +229,7 @@
                 <div class="md:w-1/2 text-center md:text-left px-4">
                     <h1 class="text-4xl font-bold">Mau daftarkan hewanmu untuk diadopsi?</h1>
                     <p class="mt-4 mb-6">
-                        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Et, libero? Iusto, consequuntur praesentium possimus iure, quas facilis perferendis ad eum nam in voluptas officiis explicabo aliquam maxime illum. Ipsum, alias.
+                    Yuk bantu hewan kesayanganmu menemukan rumah baru yang penuh kasih. Dengan mendaftarkan hewanmu di platform kami, kamu bisa menjangkau calon adopter yang bertanggung jawab dan peduli terhadap kesejahteraan hewan. Prosesnya mudah, aman, dan transparan.
                     </p>
                     @auth
                         <a href="{{ route('daftarkanhewan.form') }}"
@@ -246,7 +245,8 @@
                 </div>
                 <div class="mt-8 md:mt-0 md:w-1/2 flex justify-center">
                     <div class="relative w-full max-w-sm h-72 overflow-hidden rounded-lg shadow-lg">
-                        <img src="{{ asset('images/adopsi.jpg') }}" alt="Hewan Adopsi" class="w-full h-full object-cover">
+                        <!-- PERBAIKAN PATH: images/adopsi.jpg → assets/images/adopsi.jpg -->
+                        <img src="{{ asset('assets/images/adopsi.jpg') }}" alt="Hewan Adopsi" class="w-full h-full object-cover">
                     </div>
                 </div>
             </div>
@@ -271,10 +271,10 @@
         <section class="container mx-auto mt-12 px-6">
             <h2 class="text-3xl font-bold text-center text-[#4a2c1f] mb-6">Galeri Adopsi Berhasil</h2>
             <div class="flex flex-wrap justify-center gap-6">
-                {{-- PERBAIKAN DI SINI: Menggunakan $hewan sebagai variabel loop --}}
                 @forelse($hewansDiadopsi as $hewan)
                     <div class="shadow-lg rounded-xl overflow-hidden w-40 h-40 flex items-center justify-center bg-white">
-                        <img src="{{ asset('storage/gambar_hewan/' . $hewan->gambar) }}" alt="Adopsi Berhasil: {{ $hewan->nama }}" class="object-cover w-full h-full">
+                        <!-- PERBAIKAN PATH: assets/gambar_hewan/ → assets/images/gambar_hewan/ -->
+                        <img src="{{ asset('assets/images/gambar_hewan/' . $hewan->gambar) }}" alt="Adopsi Berhasil: {{ $hewan->nama }}" class="object-cover w-full h-full">
                     </div>
                 @empty
                     <p class="text-gray-500">Belum ada hewan yang ditampilkan di galeri adopsi berhasil.</p>
@@ -282,9 +282,10 @@
             </div>
         </section>
 
-        <footer class="bg-[#4a2c1f] text-white py-6 text-center mt-12">
-            <p>&copy; 2025 AdoptMe | Semua Hak Cipta Dilindungi</p>
-        </footer>
+       <footer class="bg-[#4a2c1f] text-white py-6 text-center">
+    <p>&copy; 2025 AdoptMe - Temukan Sahabat Sejatimu</p>
+    <p>Jl. Mawar No. 49, Surabaya | Email: kontak@adoptme.com</p>
+</footer>
 
         <a href="https://wa.me/{{ urlencode('62812118001') }}" class="fixed bottom-6 right-6 bg-green-500 text-white px-4 py-2 rounded-full shadow-lg">
             Chat via WhatsApp

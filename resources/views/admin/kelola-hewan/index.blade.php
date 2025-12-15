@@ -78,7 +78,8 @@
                             <td class="px-4 py-4 text-sm">{{ $index + 1 }}</td>
                             <td class="px-4 py-4">
                                 @if($h->gambar)
-                                    <img src="{{ asset('storage/gambar_hewan/' . $h->gambar) }}" 
+                                    <!-- PERBAIKAN PATH: assets/gambar_hewan/ → assets/images/gambar_hewan/ -->
+                                    <img src="{{ asset('assets/images/gambar_hewan/' . $h->gambar) }}" 
                                          alt="{{ $h->nama }}" 
                                          class="w-16 h-16 rounded-lg object-cover">
                                 @else
@@ -158,66 +159,74 @@
 
     <!-- Modal untuk konfirmasi hapus -->
     <div id="deleteModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
-    <div class="flex items-center justify-center min-h-screen p-4">
-        <div class="bg-white rounded-lg max-w-md w-full p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">Konfirmasi Hapus</h3>
-            <p class="text-gray-600 mb-6">Apakah Anda yakin ingin menghapus data hewan <span id="hewanName" class="font-semibold"></span>? Tindakan ini tidak dapat dibatalkan.</p>
-            <div class="flex justify-end space-x-4">
-                <button onclick="hideDeleteModal()" class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded-lg font-medium transition-colors">
-                    Batal
-                </button>
-                <form id="deleteForm" action="{{ route('hewan.destroy', $h->id) }}" method="POST" class="inline">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
-                        Hapus
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg max-w-md w-full p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Konfirmasi Hapus</h3>
+                <p class="text-gray-600 mb-6">Apakah Anda yakin ingin menghapus data hewan <span id="hewanName" class="font-semibold"></span>? Tindakan ini tidak dapat dibatalkan.</p>
+                <div class="flex justify-end space-x-4">
+                    <button onclick="hideDeleteModal()" class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded-lg font-medium transition-colors">
+                        Batal
                     </button>
-                </form>
+                    <form id="deleteForm" method="POST" class="inline">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                            Hapus
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-   <script>
-    // JavaScript untuk modal hapus
-    function confirmDelete(id, nama) {
-        // Isi nama hewan pada modal
-        document.getElementById('hewanName').textContent = nama;
+    <script>
+        // JavaScript untuk modal hapus
+        function confirmDelete(id, nama) {
+            // Isi nama hewan pada modal
+            document.getElementById('hewanName').textContent = nama;
 
-        // Update action form untuk hapus berdasarkan id hewan
-        document.getElementById('deleteForm').action = `/hewan/${id}`;
+            // Update action form untuk hapus berdasarkan id hewan
+            document.getElementById('deleteForm').action = `/hewan/${id}`;
 
-        // Tampilkan modal
-        document.getElementById('deleteModal').classList.remove('hidden');
-    }
-
-    function hideDeleteModal() {
-        // Sembunyikan modal
-        document.getElementById('deleteModal').classList.add('hidden');
-    }
-
-    // Close modal when clicking outside
-    document.getElementById('deleteModal').addEventListener('click', function(e) {
-        if (e.target === this) {
-            hideDeleteModal();
+            // Tampilkan modal
+            document.getElementById('deleteModal').classList.remove('hidden');
         }
-    });
 
-    // Auto hide success/error messages after 5 seconds
-    setTimeout(function() {
-        const alerts = document.querySelectorAll('.alert');
-        alerts.forEach(function(alert) {
-            alert.style.transition = 'opacity 0.5s';
-            alert.style.opacity = '0';
+        function hideDeleteModal() {
+            // Sembunyikan modal
+            document.getElementById('deleteModal').classList.add('hidden');
+        }
 
-            // Remove alert after transition
-            setTimeout(function() {
-                alert.remove();
-            }, 500);
+        // Close modal when clicking outside
+        document.getElementById('deleteModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                hideDeleteModal();
+            }
         });
-    }, 5000);
 
-</script>
+        // Auto hide success/error messages after 5 seconds
+        setTimeout(function() {
+            const successMsg = document.querySelector('.bg-green-100');
+            const errorMsg = document.querySelector('.bg-red-100');
+            
+            if (successMsg) {
+                successMsg.style.transition = 'opacity 0.5s';
+                successMsg.style.opacity = '0';
+                setTimeout(function() {
+                    successMsg.remove();
+                }, 500);
+            }
+            
+            if (errorMsg) {
+                errorMsg.style.transition = 'opacity 0.5s';
+                errorMsg.style.opacity = '0';
+                setTimeout(function() {
+                    errorMsg.remove();
+                }, 500);
+            }
+        }, 5000);
+
+    </script>
 
 </body>
 </html>

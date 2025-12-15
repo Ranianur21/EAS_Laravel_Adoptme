@@ -11,7 +11,8 @@
         </div>
         <div class="mt-6 md:mt-0 md:w-1/2 flex justify-center">
             <div class="relative w-96 h-72 overflow-hidden rounded-lg shadow-lg">
-                <img src="{{ asset('images/h1.png') }}" alt="Hewan Adopsi" class="w-full h-full object-cover">
+                <!-- PERBAIKAN PATH: images/h1.png → assets/images/h1.png -->
+                <img src="{{ asset('assets/images/h1.png') }}" alt="Hewan Adopsi" class="w-full h-full object-cover">
             </div>
         </div>
     </div>
@@ -37,7 +38,8 @@
         @forelse ($hewansTersedia->take(6) as $hewan)
             <div class="hewan-item bg-white p-6 border border-[#8b5e34] rounded-lg shadow-md hover:scale-105">
                 <div class="w-full h-56 flex items-center justify-center">
-                    <img src="{{ asset('storage/gambar_hewan/' . $hewan->gambar) }}" 
+                    <!-- PERBAIKAN PATH: assets/gambar_hewan/ → assets/images/gambar_hewan/ -->
+                    <img src="{{ asset('assets/images/gambar_hewan/' . $hewan->gambar) }}" 
                          alt="{{ $hewan->nama }}"
                          class="object-contain rounded-md h-full w-full">
                 </div>
@@ -75,7 +77,8 @@
     <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-10">
         @forelse($artikelEdukasi as $artikel)
             <div class="bg-white p-4 border-2 border-[#8b5e34] rounded-lg shadow-md overflow-hidden">
-                <img src="{{ asset('storage/' . $artikel->image_url) }}" 
+                <!-- PERBAIKAN PATH: assets/ → assets/images/ -->
+                <img src="{{ asset('assets/images/' . $artikel->image_url) }}" 
                      alt="{{ $artikel->title }}" 
                      class="w-full h-40 object-cover rounded-md">
                 <h3 class="text-xl font-bold text-[#8b5e34] mt-3">{{ $artikel->title }}</h3>
@@ -91,14 +94,13 @@
     </div>
 
     {{-- Tombol "Lihat Semua Artikel" --}}
-    <div class="mt-10 mb-20"> {{-- kasih margin bawah lebih besar --}}
+    <div class="mt-10 mb-20">
         <a href="{{ route('artikel.index') }}"
            class="inline-block bg-[#4a2c1f] text-white py-3 px-6 rounded-lg text-lg font-semibold hover:bg-[#341d13] transition">
             Lihat Semua Artikel
         </a>
     </div>
 </section>
-
 
 <!-- Footer -->
 <footer class="bg-[#4a2c1f] text-white py-6 text-center">

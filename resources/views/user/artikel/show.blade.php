@@ -23,7 +23,7 @@
         </p>
 
         @if($artikel->image_url)
-            <img src="{{ asset('storage/' . $artikel->image_url) }}"
+            <img src="{{ asset('assets/images/' . $artikel->image_url) }}">
                  alt="{{ $artikel->title }}"
                  class="max-w-xl h-auto object-cover rounded-lg mb-6 mx-auto block"> {{-- max-w-xl untuk lebar, h-auto untuk tinggi otomatis, mx-auto block untuk tengah --}}
         @endif

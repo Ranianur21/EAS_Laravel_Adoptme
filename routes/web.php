@@ -105,6 +105,8 @@ Route::patch('/adopsi/{id}/status', [AdminAdopsiController::class, 'updateStatus
 Route::delete('/adopsi/{id}', [AdminAdopsiController::class, 'destroy'])->name('adopsi.destroy');
 Route::get('/adopsi/create', [AdminAdopsiController::class, 'create'])->name('adopsi.create');
 Route::post('/adopsi/store', [AdminAdopsiController::class, 'store'])->name('adopsi.store');
+Route::post('/adopsi/{id}/approve', [AdminAdopsiController::class, 'approve'])->name('adopsi.approve');
+Route::post('/adopsi/{id}/reject', [AdminAdopsiController::class, 'reject'])->name('adopsi.reject');
 
 // Rute otentikasi Laravel Breeze (login, register, dsb.)
 require __DIR__.'/auth.php';
